@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{PAGE_TITLE}}</title>
+  <meta name="description" content="{{PAGE_DESC}}" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="{{CANONICAL}}" />
+  <meta name="theme-color" content="#08090d" />
+  <link rel="icon" type="image/png" sizes="64x64" href="/brand/ounc3-64.png" />
+  <link rel="icon" type="image/png" sizes="128x128" href="/brand/ounc3-128.png" />
+  <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+
+  <!-- Compartilhamento (WhatsApp, Facebook, X, Telegram...) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="{{SITE_NAME}}" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:url" content="{{CANONICAL}}" />
+  <meta property="og:title" content="{{PAGE_TITLE}}" />
+  <meta property="og:description" content="{{PAGE_DESC}}" />
+  <meta property="og:image" content="{{SITE_URL}}/brand/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="{{SITE_NAME}} — baixe vídeos e áudios em MP4 e MP3" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{PAGE_TITLE}}" />
+  <meta name="twitter:description" content="{{PAGE_DESC}}" />
+  <meta name="twitter:image" content="{{SITE_URL}}/brand/og-image.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script type="application/ld+json">{{RAW_JSON_LD}}</script>
+</head>
+<body>
+  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="brand" href="/" aria-label="OunceDown — início">
+      <img class="brand-mark" src="/brand/ounc3-128.png" alt="" width="38" height="38" />
+      <span>Ounce<b>Down</b></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#recursos">Recursos</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <span class="pill"><span class="dot"></span> Rápido, gratuito e sem cadastro</span>
+      <h1>{{H1_A}}<br /><span class="grad">{{H1_B}}</span></h1>
+      <p class="lead">{{LEAD}}</p>
+
+      <form id="form" class="search" autocomplete="off" novalidate>
+        <div class="search-box" id="searchBox">
+          <span class="platform-icon" id="platformIcon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 1 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 1 0 5.66 5.66l1-1"/></svg>
+          </span>
+          <input id="url" type="url" inputmode="url" placeholder="Cole o link do vídeo aqui…" aria-label="Link do vídeo" />
+          <button type="button" class="btn-ghost" id="pasteBtn" title="Colar da área de transferência">
+            <svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="4" rx="1"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/></svg>
+            <span>Colar</span>
+          </button>
+          <button type="button" class="btn-clear" id="clearBtn" title="Limpar" hidden>
+            <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+          <button type="submit" class="btn-primary" id="goBtn">
+            <span class="btn-label">Analisar</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+        </div>
+        <p class="hint" id="hint" role="status" aria-live="polite">&nbsp;</p>
+      </form>
+
+      <ul class="platforms" id="platforms">
+        <li data-p="youtube"><svg viewBox="0 0 24 24"><path class="fill" d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12 31 31 0 0 0 1 16.8a3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1c.4-1.6.5-4.8.5-4.8s0-3.2-.5-4.8ZM9.7 15.1V8.9L15.5 12l-5.8 3.1Z"/></svg>YouTube</li>
+        <li data-p="facebook"><svg viewBox="0 0 24 24"><path class="fill" d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12Z"/></svg>Facebook</li>
+        <li data-p="instagram"><svg viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle class="fill" cx="17.4" cy="6.6" r="1.1"/></svg>Instagram</li>
+        <li data-p="x"><svg viewBox="0 0 24 24"><path class="fill" d="M18.2 2.3h3.4l-7.4 8.4 8.7 11.5h-6.8l-5.3-7-6.1 7H1.3l7.9-9L.9 2.3h7l4.8 6.4 5.5-6.4Zm-1.2 17.9h1.9L7 4.2H5l12 16Z"/></svg>X</li>
+      </ul>
+    </section>
+
+    <!-- Resultado -->
+    <section class="result" id="result" hidden>
+      <article class="card preview" id="preview">
+        <div class="thumb">
+          <img id="thumb" alt="" />
+          <span class="duration" id="duration"></span>
+          <span class="badge-platform" id="badgePlatform"></span>
+        </div>
+        <div class="meta">
+          <h2 id="title"></h2>
+          <p class="uploader" id="uploader"></p>
+
+          <div class="tabs" role="tablist">
+            <button type="button" role="tab" class="tab active" data-kind="video" aria-selected="true">
+              <svg viewBox="0 0 24 24"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="m17 10 5-3v10l-5-3"/></svg>Vídeo MP4
+            </button>
+            <button type="button" role="tab" class="tab" data-kind="audio" aria-selected="false">
+              <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Áudio MP3
+            </button>
+            <span class="tab-indicator"></span>
+          </div>
+
+          <div class="options" id="videoOpts">
+            <label class="opt"><input type="radio" name="q" value="720" /><span><b>720p</b><small>HD</small></span></label>
+            <label class="opt"><input type="radio" name="q" value="1080" /><span><b>1080p</b><small>Full HD</small></span></label>
+            <label class="opt"><input type="radio" name="q" value="2160" /><span><b>4K</b><small>Ultra HD</small></span></label>
+          </div>
+          <div class="options audio-opt" id="audioOpts" hidden>
+            <div class="opt static"><span><b>MP3</b><small>Melhor qualidade disponível · até 320 kbps</small></span></div>
+          </div>
+
+          <button class="btn-primary btn-download" id="downloadBtn">
+            <svg viewBox="0 0 24 24"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+            <span id="downloadLabel">Baixar vídeo</span>
+          </button>
+
+          <div class="progress" id="progress" hidden>
+            <div class="progress-top">
+              <span id="stage">Iniciando…</span>
+              <span id="pct">0%</span>
+            </div>
+            <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+            <div class="progress-bottom">
+              <span id="speed"></span>
+              <span id="eta"></span>
+            </div>
+            <button type="button" class="link-btn" id="cancelBtn">Cancelar</button>
+          </div>
+
+          <div class="done" id="done" hidden>
+            <span class="check"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+            <div><b>Download concluído</b><small id="doneInfo"></small></div>
+            <a class="btn-ghost" id="againLink" href="#">Baixar de novo</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Skeleton -->
+    <section class="result" id="skeleton" hidden>
+      <article class="card preview skeleton">
+        <div class="thumb sk"></div>
+        <div class="meta">
+          <div class="sk sk-line w80"></div>
+          <div class="sk sk-line w40"></div>
+          <div class="sk sk-block"></div>
+          <div class="sk sk-btn"></div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Anúncio 1: banner horizontal abaixo da ferramenta -->
+    <div class="ad ad-banner" data-ad="top" aria-label="Publicidade"></div>
+
+    <section class="section" id="como-funciona">
+      <h2 class="section-title">Como funciona</h2>
+      <ol class="steps">
+        <li><span>1</span><h3>Copie o link</h3><p>Abra o vídeo no app ou navegador e copie o endereço.</p></li>
+        <li><span>2</span><h3>Cole no OunceDown</h3><p>A plataforma é detectada automaticamente.</p></li>
+        <li><span>3</span><h3>Escolha e baixe</h3><p>Selecione a resolução ou só o áudio e pronto.</p></li>
+      </ol>
+    </section>
+
+    <section class="section" id="recursos">
+      <h2 class="section-title">Recursos</h2>
+      <div class="features">
+        <div class="feature"><div class="f-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><h3>Até {{MAX_LABEL}}</h3><p>{{RES_TEXT}}</p></div>
+        <div class="feature"><div class="f-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><h3>Áudio em MP3</h3><p>Extraia só a trilha sonora na melhor qualidade.</p></div>
+        <div class="feature"><div class="f-icon"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg></div><h3>Rápido</h3><p>Progresso em tempo real, sem anúncios no meio do download.</p></div>
+        <div class="feature"><div class="f-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Privado</h3><p>Sem cadastro. Os arquivos são apagados do servidor.</p></div>
+      </div>
+    </section>
+
+    <section class="section seo-text" id="sobre">
+      {{RAW_SEO_TEXT}}
+    </section>
+
+    <!-- Anúncio 2: entre Recursos e FAQ -->
+    <div class="ad ad-banner ad-section" data-ad="middle" aria-label="Publicidade"></div>
+
+    <section class="section" id="faq">
+      <h2 class="section-title">Perguntas frequentes</h2>
+      <div class="faq">
+        {{RAW_FAQ}}
+      </div>
+    </section>
+
+    <section class="section tools" id="ferramentas" aria-labelledby="ferramentas-title">
+      <h2 class="section-title" id="ferramentas-title">Ferramentas</h2>
+      <ul class="tool-links">{{RAW_TOOL_LINKS}}</ul>
+    </section>
+    <!-- Anúncio 3: antes do rodapé -->
+    <div class="ad ad-banner ad-section" data-ad="bottom" aria-label="Publicidade"></div>
+  </main>
+
+  <!-- Anúncios laterais: só em telas bem largas, nas margens vazias -->
+  <aside class="ad ad-rail ad-rail-left" data-ad="railLeft" aria-label="Publicidade"></aside>
+  <aside class="ad ad-rail ad-rail-right" data-ad="railRight" aria-label="Publicidade"></aside>
+
+  <footer class="footer">
+    <div class="footer-brand">
+      <img src="/brand/ounc3-64.png" alt="Logo Ounc3" width="32" height="32" loading="lazy" />
+      <span>Um projeto <b>Ounc3</b></span>
+    </div>
+    <a class="gh-link" href="https://github.com/MajorCaio?tab=repositories" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24"><path class="fill" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+      MajorCaio no GitHub
+    </a>
+    <nav class="footer-links">
+      <a href="/privacidade">Privacidade</a>
+      <a href="/termos">Termos de uso</a>
+      <a href="mailto:{{CONTACT_EMAIL}}">Contato</a>
+    </nav>
+    <p>© <span id="year"></span> OunceDown · Use com responsabilidade e respeite os direitos autorais.</p>
+  </footer>
+
+  <div class="toast" id="toast" role="alert"></div>
+  <script src="/app.js"></script>
+  <script src="/ads-config.js"></script>
+  <script src="/ads.js"></script>
+</body>
+</html>

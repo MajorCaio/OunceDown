@@ -1,0 +1,27 @@
+{
+  "siteName": "OunceDown",
+  "siteUrl": "https://seudominio.com.br",
+  "contactEmail": "contato@seudominio.com.br",
+  "owner": "Ounc3",
+  "policiesUpdated": "2026-11-16",
+  "ads": {
+    "provider": "adsterra",
+    "showPlaceholders": true,
+    "adsterra": {
+      "scriptUrl": "",
+      "banner728": "",
+      "banner320": "",
+      "banner160": ""
+    }
+  },
+  "adsense": {
+    "client": "",
+    "slots": {
+      "top": "",
+      "middle": "",
+      "bottom": "",
+      "railLeft": "",
+      "railRight": ""
+    }
+  }
+}
