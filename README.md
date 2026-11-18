@@ -61,6 +61,26 @@ cp site.config.example.json site.config.json
 | `YTDLP_JS_RUNTIMES` | — | Runtime JavaScript para o yt-dlp resolver desafios do YouTube (ex.: `node`) |
 | `TMP_DIR` | `./tmp` | Pasta dos arquivos temporários (apagados após 30 min) |
 
+### Proteção contra abuso
+
+A análise de um link (yt-dlp) é a operação mais pesada do servidor. Para que poucos pedidos não derrubem uma máquina fraca, o OunceDown tem quatro camadas de proteção:
+
+- **Limite por visitante:** número máximo de análises por minuto e de downloads a cada 10 minutos. Atrás do Cloudflare Tunnel, o IP real vem do cabeçalho `CF-Connecting-IP`, aceito apenas em conexões locais (do `cloudflared`).
+- **Um pedido por visitante de cada vez:** uma análise e um download por IP.
+- **Fila global:** poucas análises rodam ao mesmo tempo; o excesso espera numa fila curta ou recebe `429 Servidor ocupado` na hora, sem gastar CPU.
+- **Cache:** o resultado de um link vale 30 minutos (erros, 2 minutos), e pedidos iguais simultâneos compartilham a mesma análise.
+
+| Variável | Padrão | Para que serve |
+|---|---|---|
+| `MAX_INFO_CONCURRENT` | `2` | Análises rodando ao mesmo tempo |
+| `INFO_QUEUE_MAX` | `4` | Análises que podem esperar na fila |
+| `INFO_QUEUE_WAIT_MS` | `60000` | Tempo máximo esperando na fila |
+| `INFO_TIMEOUT_MS` | `90000` | Tempo máximo de uma análise |
+| `RATE_INFO_PER_MIN` | `8` | Análises por visitante por minuto |
+| `RATE_JOBS_PER_10MIN` | `6` | Downloads por visitante a cada 10 minutos |
+
+No tablet de 1 GB de RAM: `MAX_INFO_CONCURRENT=1`, `INFO_QUEUE_MAX=3`, `RATE_INFO_PER_MIN=6`, `RATE_JOBS_PER_10MIN=4`. Para proteção na borda, combine com uma regra de *rate limiting* em `/api/*` no painel da Cloudflare.
+
 ## ⚙️ Configuração (`site.config.json`)
 
 | Campo | Para que serve |

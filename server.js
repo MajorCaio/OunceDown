@@ -25,6 +25,18 @@ const MAX_CONCURRENT = Number(process.env.MAX_CONCURRENT) || 3;
 const MAX_HEIGHT = Number(process.env.MAX_HEIGHT) || 2160;
 const JOB_TTL_MS = 30 * 60 * 1000;
 
+// ---------- Proteção contra abuso (todos ajustáveis por variável de ambiente) ----------
+const envNum = (k, d) => (Number(process.env[k]) > 0 ? Number(process.env[k]) : d);
+const MAX_INFO_CONCURRENT = envNum('MAX_INFO_CONCURRENT', 2);   // análises (yt-dlp) rodando ao mesmo tempo
+const INFO_QUEUE_MAX = envNum('INFO_QUEUE_MAX', 4);             // pedidos que podem esperar na fila
+const INFO_QUEUE_WAIT_MS = envNum('INFO_QUEUE_WAIT_MS', 60000); // tempo máximo esperando na fila
+const INFO_TIMEOUT_MS = envNum('INFO_TIMEOUT_MS', 90000);       // tempo máximo de uma análise
+const RATE_INFO_PER_MIN = envNum('RATE_INFO_PER_MIN', 8);       // análises por visitante por minuto
+const RATE_JOBS_PER_10MIN = envNum('RATE_JOBS_PER_10MIN', 6);   // downloads por visitante a cada 10 min
+const INFO_CACHE_TTL_MS = 30 * 60 * 1000;                       // resultado de um link vale 30 min
+const INFO_ERROR_TTL_MS = 2 * 60 * 1000;                        // link com erro: não reprocessa por 2 min
+const INFO_CACHE_MAX = 300;
+
 fs.mkdirSync(TMP_DIR, { recursive: true });
 
 // ---------- Plataformas ----------
@@ -184,8 +196,87 @@ function renderPage(file, route = '/') {
   return html;
 }
 
+// ---------- Proteção: IP do visitante, limite de pedidos, fila e cache ----------
+
+// Atrás do Cloudflare Tunnel toda conexão chega de 127.0.0.1; o IP real vem no cabeçalho
+// CF-Connecting-IP. Só confia nele quando a conexão é local (o cloudflared), para ninguém da rede forjar.
+function clientIp(req) {
+  const remote = req.socket.remoteAddress || '';
+  const local = /^(::1$|127\.|::ffff:127\.)/.test(remote);
+  const cf = req.get('cf-connecting-ip');
+  return local && cf ? cf.trim().slice(0, 64) : remote;
+}
+
+// Limite por janela fixa: { "balde:ip" → { count, reset } }
+const hits = new Map();
+function rateLimit(bucket, limit, windowMs, message) {
+  return (req, res, next) => {
+    const key = bucket + ':' + clientIp(req);
+    const now = Date.now();
+    let h = hits.get(key);
+    if (!h || now >= h.reset) { h = { count: 0, reset: now + windowMs }; hits.set(key, h); }
+    if (++h.count > limit) {
+      res.set('Retry-After', String(Math.ceil((h.reset - now) / 1000)));
+      return res.status(429).json({ error: message });
+    }
+    next();
+  };
+}
+
+class BusyError extends Error {}
+const BUSY_MSG = 'Muitas pessoas usando agora. Tente novamente em alguns segundos.';
+
+// Fila das análises: no máximo MAX_INFO_CONCURRENT rodando e INFO_QUEUE_MAX esperando.
+let infoActive = 0;
+const infoQueue = [];
+function acquireInfoSlot(res) {
+  if (infoActive < MAX_INFO_CONCURRENT) { infoActive++; return Promise.resolve(); }
+  if (infoQueue.length >= INFO_QUEUE_MAX) return Promise.reject(new BusyError(BUSY_MSG));
+  return new Promise((resolve, reject) => {
+    const item = { resolve, reject };
+    const drop = () => {
+      const i = infoQueue.indexOf(item);
+      if (i >= 0) infoQueue.splice(i, 1);
+      clearTimeout(item.timer);
+    };
+    item.timer = setTimeout(() => { drop(); reject(new BusyError(BUSY_MSG)); }, INFO_QUEUE_WAIT_MS);
+    // Visitante desistiu (fechou a aba): sai da fila sem gastar um yt-dlp.
+    res.on('close', () => { if (!res.writableEnded && infoQueue.includes(item)) { drop(); reject(new BusyError(BUSY_MSG)); } });
+    infoQueue.push(item);
+  });
+}
+function releaseInfoSlot() {
+  const next = infoQueue.shift();
+  if (next) { clearTimeout(next.timer); next.resolve(); } else infoActive--;
+}
+
+// Cache de resultados e pedidos iguais em andamento (o mesmo link analisado só uma vez).
+const infoCache = new Map();    // url → { ok, data | error, exp }
+const infoInflight = new Map(); // url → Promise
+const infoPerIp = new Map();    // ip → análises em andamento
+
+function cacheGet(url) {
+  const c = infoCache.get(url);
+  if (!c) return null;
+  if (Date.now() > c.exp) { infoCache.delete(url); return null; }
+  return c;
+}
+function cacheSet(url, entry) {
+  if (infoCache.size >= INFO_CACHE_MAX) infoCache.delete(infoCache.keys().next().value); // remove o mais antigo
+  infoCache.set(url, entry);
+}
+
+// Limpeza periódica dos contadores (evita que muitos IPs diferentes encham a memória).
+setInterval(() => {
+  const now = Date.now();
+  for (const [k, h] of hits) if (now >= h.reset) hits.delete(k);
+  if (hits.size > 20000) hits.clear();
+  for (const [k, c] of infoCache) if (now > c.exp) infoCache.delete(k);
+}, 60 * 1000).unref();
+
 // ---------- App ----------
 const app = express();
+app.disable('x-powered-by');
 app.use(express.json({ limit: '10kb' }));
 
 // www.ounc3.com.br → ounc3.com.br (um endereço só evita conteúdo duplicado no Google)
@@ -269,33 +360,76 @@ app.use(express.static(path.join(ROOT, 'public'), {
 
 app.get('/api/health', (_req, res) => res.json({ ok: true, ready: binariesReady() }));
 
-app.post('/api/info', async (req, res) => {
+// Roda o yt-dlp e monta a resposta da análise.
+async function fetchInfo(p) {
+  const json = JSON.parse(await runYtdlp([...baseArgs(), '-J', p.url], { timeout: INFO_TIMEOUT_MS }));
+  const info = json._type === 'playlist' && json.entries?.length ? json.entries[0] : json;
+  const formats = info.formats || [];
+  const heights = formats.filter((f) => f.vcodec && f.vcodec !== 'none' && f.height).map((f) => f.height);
+  const maxH = heights.length ? Math.max(...heights) : (info.height || 0);
+  const hasAudio = formats.some((f) => f.acodec && f.acodec !== 'none') || !formats.length;
+  return {
+    platform: p.name,
+    url: p.url,
+    title: info.title || info.description?.slice(0, 80) || 'Mídia sem título',
+    uploader: info.uploader || info.channel || info.uploader_id || '',
+    thumbnail: info.thumbnail || info.thumbnails?.at(-1)?.url || '',
+    duration: info.duration || null,
+    maxHeight: maxH,
+    qualities: [720, 1080, 2160].map((q) => ({ height: q, available: q <= MAX_HEIGHT && maxH >= q * 0.9 })),
+    hasVideo: heights.length > 0 || !!info.height,
+    hasAudio,
+  };
+}
+
+const limitInfo = rateLimit('info', RATE_INFO_PER_MIN, 60 * 1000,
+  'Muitas análises seguidas. Aguarde um minuto e tente de novo.');
+
+app.post('/api/info', limitInfo, async (req, res) => {
   const p = detectPlatform(req.body?.url);
   if (!p) return res.status(400).json({ error: 'Cole um link válido do YouTube, Facebook, Instagram ou X.' });
   if (!binariesReady()) return res.status(503).json({ error: 'Servidor sem yt-dlp/ffmpeg. Rode "npm run setup".' });
 
-  try {
-    const json = JSON.parse(await runYtdlp([...baseArgs(), '-J', p.url]));
-    const info = json._type === 'playlist' && json.entries?.length ? json.entries[0] : json;
-    const formats = info.formats || [];
-    const heights = formats.filter((f) => f.vcodec && f.vcodec !== 'none' && f.height).map((f) => f.height);
-    const maxH = heights.length ? Math.max(...heights) : (info.height || 0);
-    const hasAudio = formats.some((f) => f.acodec && f.acodec !== 'none') || !formats.length;
+  // 1) Já analisado há pouco? Responde na hora, sem gastar CPU.
+  const cached = cacheGet(p.url);
+  if (cached) return cached.ok ? res.json(cached.data) : res.status(422).json({ error: cached.error });
 
-    res.json({
-      platform: p.name,
-      url: p.url,
-      title: info.title || info.description?.slice(0, 80) || 'Mídia sem título',
-      uploader: info.uploader || info.channel || info.uploader_id || '',
-      thumbnail: info.thumbnail || info.thumbnails?.at(-1)?.url || '',
-      duration: info.duration || null,
-      maxHeight: maxH,
-      qualities: [720, 1080, 2160].map((q) => ({ height: q, available: q <= MAX_HEIGHT && maxH >= q * 0.9 })),
-      hasVideo: heights.length > 0 || !!info.height,
-      hasAudio,
-    });
+  // 2) Alguém já está analisando este mesmo link? Espera o mesmo resultado.
+  if (infoInflight.has(p.url)) {
+    try { return res.json(await infoInflight.get(p.url)); }
+    catch (e) { return res.status(e instanceof BusyError ? 429 : 422).json({ error: e.message }); }
+  }
+
+  // 3) Uma análise por visitante de cada vez.
+  const ip = clientIp(req);
+  if ((infoPerIp.get(ip) || 0) >= 1) {
+    return res.status(429).json({ error: 'Aguarde a análise anterior terminar.' });
+  }
+  infoPerIp.set(ip, (infoPerIp.get(ip) || 0) + 1);
+
+  const task = (async () => {
+    await acquireInfoSlot(res);                 // 4) fila global (ou "ocupado")
+    try {
+      const data = await fetchInfo(p);
+      cacheSet(p.url, { ok: true, data, exp: Date.now() + INFO_CACHE_TTL_MS });
+      return data;
+    } catch (e) {
+      cacheSet(p.url, { ok: false, error: e.message, exp: Date.now() + INFO_ERROR_TTL_MS });
+      throw e;
+    } finally {
+      releaseInfoSlot();
+    }
+  })();
+  infoInflight.set(p.url, task);
+
+  try {
+    res.json(await task);
   } catch (e) {
-    res.status(422).json({ error: e.message });
+    if (!res.headersSent && !res.destroyed) res.status(e instanceof BusyError ? 429 : 422).json({ error: e.message });
+  } finally {
+    infoInflight.delete(p.url);
+    const n = (infoPerIp.get(ip) || 1) - 1;
+    n > 0 ? infoPerIp.set(ip, n) : infoPerIp.delete(ip);
   }
 });
 
@@ -309,7 +443,14 @@ function emit(job, data) {
   job.clients.forEach((c) => c.write(payload));
 }
 
-app.post('/api/jobs', (req, res) => {
+const limitJobs = rateLimit('jobs', RATE_JOBS_PER_10MIN, 10 * 60 * 1000,
+  'Limite de downloads atingido. Aguarde alguns minutos e tente de novo.');
+
+app.post('/api/jobs', limitJobs, (req, res) => {
+  const ip = clientIp(req);
+  if ([...jobs.values()].some((j) => j.status === 'running' && j.ip === ip)) {
+    return res.status(429).json({ error: 'Você já tem um download em andamento. Aguarde ele terminar.' });
+  }
   const p = detectPlatform(req.body?.url);
   const kind = req.body?.kind === 'audio' ? 'audio' : 'video';
   const asked = [720, 1080, 2160].includes(Number(req.body?.quality)) ? Number(req.body.quality) : 1080;
@@ -334,7 +475,7 @@ app.post('/api/jobs', (req, res) => {
   }
   args.push(p.url);
 
-  const job = { id, dir, status: 'running', created: Date.now(), clients: new Set(), file: null,
+  const job = { id, dir, ip, status: 'running', created: Date.now(), clients: new Set(), file: null,
     state: { status: 'running', stage: 'Iniciando…', percent: 0, speed: '', eta: '', part: 1 } };
   jobs.set(id, job);
 
@@ -421,7 +562,11 @@ setInterval(() => {
   jobs.forEach((j) => { if (now - j.created > JOB_TTL_MS) removeJob(j); });
 }, 60 * 1000).unref();
 
-app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
   console.log(`OunceDown rodando em http://${HOST || 'localhost'}:${PORT}`);
+  console.log(`Proteção: ${MAX_INFO_CONCURRENT} análise(s) por vez, fila de ${INFO_QUEUE_MAX}, ${RATE_INFO_PER_MIN} análises/min por visitante`);
   if (!binariesReady()) console.warn('⚠ yt-dlp/ffmpeg ausentes — rode "npm run setup".');
 });
+// Conexões lentas de propósito (que nunca terminam de mandar o pedido) são encerradas.
+server.headersTimeout = 15000;
+server.requestTimeout = 30000;
