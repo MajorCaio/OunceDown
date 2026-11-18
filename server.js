@@ -1,4 +1,4 @@
-// OunceDown — servidor Express que usa yt-dlp + ffmpeg para extrair e baixar mídias.
+// OunceDown: servidor Express que usa o yt-dlp e o ffmpeg para baixar os vídeos.
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -11,7 +11,7 @@ const HOST = process.env.HOST || undefined; // ex.: 127.0.0.1 para aceitar só c
 const ROOT = __dirname;
 const TMP_DIR = process.env.TMP_DIR || path.join(ROOT, 'tmp');
 
-// Binários: variável de ambiente > cópia local em ./bin > ffmpeg-static/PATH do sistema.
+// Onde procurar os programas: variável de ambiente, depois ./bin, depois ffmpeg-static ou o PATH.
 // No servidor Twist (Termux) yt-dlp e ffmpeg vêm do gerenciador de pacotes.
 const LOCAL_YTDLP = path.join(ROOT, 'bin', process.platform === 'win32' ? 'yt-dlp.exe' : 'yt-dlp');
 const YTDLP = process.env.YTDLP_PATH || (fs.existsSync(LOCAL_YTDLP) ? LOCAL_YTDLP : 'yt-dlp');
@@ -207,7 +207,7 @@ function clientIp(req) {
   return local && cf ? cf.trim().slice(0, 64) : remote;
 }
 
-// Limite por janela fixa: { "balde:ip" → { count, reset } }
+// Contador por visitante que zera a cada janela de tempo.
 const hits = new Map();
 function rateLimit(bucket, limit, windowMs, message) {
   return (req, res, next) => {
@@ -279,7 +279,7 @@ const app = express();
 app.disable('x-powered-by');
 app.use(express.json({ limit: '10kb' }));
 
-// www.ounc3.com.br → ounc3.com.br (um endereço só evita conteúdo duplicado no Google)
+// Manda o www para o domínio sem www, para o Google não ver duas cópias do site.
 app.use((req, res, next) => {
   const host = req.headers.host || '';
   if (host.startsWith('www.')) return res.redirect(301, `https://${host.slice(4)}${req.originalUrl}`);
@@ -296,7 +296,7 @@ app.get('/index.html', (_req, res) => res.redirect(301, '/'));
   app.get(`/${p}.html`, (_req, res) => res.redirect(301, `/${p}`));
 });
 
-// ads.txt — exigido pelo AdSense na raiz do domínio.
+// ads.txt: o AdSense exige esse arquivo na raiz do domínio.
 app.get('/ads.txt', (_req, res) => {
   const cfg = loadConfig();
   const client = cfg.adsense?.client;
@@ -390,17 +390,17 @@ app.post('/api/info', limitInfo, async (req, res) => {
   if (!p) return res.status(400).json({ error: 'Cole um link válido do YouTube, Facebook, Instagram ou X.' });
   if (!binariesReady()) return res.status(503).json({ error: 'Servidor sem yt-dlp/ffmpeg. Rode "npm run setup".' });
 
-  // 1) Já analisado há pouco? Responde na hora, sem gastar CPU.
+  // Link analisado há pouco: responde direto do cache.
   const cached = cacheGet(p.url);
   if (cached) return cached.ok ? res.json(cached.data) : res.status(422).json({ error: cached.error });
 
-  // 2) Alguém já está analisando este mesmo link? Espera o mesmo resultado.
+  // O mesmo link já está sendo analisado: espera o resultado dele.
   if (infoInflight.has(p.url)) {
     try { return res.json(await infoInflight.get(p.url)); }
     catch (e) { return res.status(e instanceof BusyError ? 429 : 422).json({ error: e.message }); }
   }
 
-  // 3) Uma análise por visitante de cada vez.
+  // Uma análise por visitante de cada vez.
   const ip = clientIp(req);
   if ((infoPerIp.get(ip) || 0) >= 1) {
     return res.status(429).json({ error: 'Aguarde a análise anterior terminar.' });
@@ -408,7 +408,7 @@ app.post('/api/info', limitInfo, async (req, res) => {
   infoPerIp.set(ip, (infoPerIp.get(ip) || 0) + 1);
 
   const task = (async () => {
-    await acquireInfoSlot(res);                 // 4) fila global (ou "ocupado")
+    await acquireInfoSlot(res);                 // entra na fila ou recebe "ocupado"
     try {
       const data = await fetchInfo(p);
       cacheSet(p.url, { ok: true, data, exp: Date.now() + INFO_CACHE_TTL_MS });
@@ -554,7 +554,7 @@ function removeJob(job) {
 // 404 de verdade (o Google não indexa endereços inexistentes)
 app.use((req, res) => {
   if (req.path.startsWith('/api/')) return res.status(404).json({ error: 'Rota não encontrada.' });
-  res.status(404).type('html').send(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Página não encontrada — OunceDown</title><link rel="stylesheet" href="/styles.css"></head><body><main class="hero"><h1>Página não encontrada</h1><p class="lead">O endereço que você abriu não existe.</p><p style="margin-top:24px"><a class="btn-primary" href="/" style="display:inline-flex;padding:12px 22px;border-radius:12px">Ir para o OunceDown</a></p></main></body></html>`);
+  res.status(404).type('html').send(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Página não encontrada | OunceDown</title><link rel="stylesheet" href="/styles.css"></head><body><main class="hero"><h1>Página não encontrada</h1><p class="lead">O endereço que você abriu não existe.</p><p style="margin-top:24px"><a class="btn-primary" href="/" style="display:inline-flex;padding:12px 22px;border-radius:12px">Ir para o OunceDown</a></p></main></body></html>`);
 });
 
 setInterval(() => {
@@ -565,7 +565,7 @@ setInterval(() => {
 const server = app.listen(PORT, HOST, () => {
   console.log(`OunceDown rodando em http://${HOST || 'localhost'}:${PORT}`);
   console.log(`Proteção: ${MAX_INFO_CONCURRENT} análise(s) por vez, fila de ${INFO_QUEUE_MAX}, ${RATE_INFO_PER_MIN} análises/min por visitante`);
-  if (!binariesReady()) console.warn('⚠ yt-dlp/ffmpeg ausentes — rode "npm run setup".');
+  if (!binariesReady()) console.warn('⚠ yt-dlp/ffmpeg não encontrados. Rode "npm run setup".');
 });
 // Conexões lentas de propósito (que nunca terminam de mandar o pedido) são encerradas.
 server.headersTimeout = 15000;

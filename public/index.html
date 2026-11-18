@@ -7,7 +7,9 @@
   <meta name="description" content="{{PAGE_DESC}}" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="{{CANONICAL}}" />
-  <meta name="theme-color" content="#08090d" />
+  <meta name="theme-color" content="#04100c" />
+  <link rel="preload" as="image" href="/brand/bg-banner.webp" type="image/webp" media="(min-width: 641px)" />
+  <link rel="preload" as="image" href="/brand/bg-banner-mobile.webp" type="image/webp" media="(max-width: 640px)" />
   <link rel="icon" type="image/png" sizes="64x64" href="/brand/ounc3-64.png" />
   <link rel="icon" type="image/png" sizes="128x128" href="/brand/ounc3-128.png" />
   <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
@@ -22,7 +24,7 @@
   <meta property="og:image" content="{{SITE_URL}}/brand/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="{{SITE_NAME}} — baixe vídeos e áudios em MP4 e MP3" />
+  <meta property="og:image:alt" content="{{SITE_NAME}}: baixe vídeos em MP4 e áudios em MP3" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="{{PAGE_TITLE}}" />
   <meta name="twitter:description" content="{{PAGE_DESC}}" />
@@ -35,11 +37,40 @@
   <script type="application/ld+json">{{RAW_JSON_LD}}</script>
 </head>
 <body>
+  <div class="bg-hero" aria-hidden="true"></div>
   <div class="bg-glow" aria-hidden="true"></div>
-  <div class="bg-grid" aria-hidden="true"></div>
+  <!-- Ondas de "seda" atrás do conteúdo, na parte de baixo da página -->
+  <svg class="bg-silk" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="silkA" x1="0" y1="0" x2="1" y2="0.4">
+        <stop offset="0" stop-color="#0d6e52" stop-opacity="0" />
+        <stop offset=".45" stop-color="#1fc88f" stop-opacity=".55" />
+        <stop offset="1" stop-color="#0d6e52" stop-opacity="0" />
+      </linearGradient>
+      <linearGradient id="silkB" x1="0" y1="0.3" x2="1" y2="0">
+        <stop offset="0" stop-color="#b9862a" stop-opacity="0" />
+        <stop offset=".55" stop-color="#e6b754" stop-opacity=".45" />
+        <stop offset="1" stop-color="#b9862a" stop-opacity="0" />
+      </linearGradient>
+      <linearGradient id="silkFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0a2a20" stop-opacity=".55" />
+        <stop offset="1" stop-color="#04100c" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+    <g class="silk-1">
+      <path d="M-100 420 C 240 300, 520 560, 860 430 S 1380 260, 1560 380 L 1560 900 L -100 900 Z" fill="url(#silkFill)" />
+      <path d="M-100 420 C 240 300, 520 560, 860 430 S 1380 260, 1560 380" fill="none" stroke="url(#silkA)" stroke-width="2" />
+      <path d="M-100 450 C 260 340, 540 590, 880 465 S 1390 300, 1560 410" fill="none" stroke="url(#silkA)" stroke-width="1" opacity=".6" />
+    </g>
+    <g class="silk-2">
+      <path d="M-100 600 C 300 500, 600 720, 960 600 S 1400 470, 1560 560 L 1560 900 L -100 900 Z" fill="url(#silkFill)" />
+      <path d="M-100 600 C 300 500, 600 720, 960 600 S 1400 470, 1560 560" fill="none" stroke="url(#silkB)" stroke-width="1.6" />
+      <path d="M-100 630 C 320 535, 620 750, 980 632 S 1410 505, 1560 590" fill="none" stroke="url(#silkB)" stroke-width=".8" opacity=".6" />
+    </g>
+  </svg>
 
   <header class="nav">
-    <a class="brand" href="/" aria-label="OunceDown — início">
+    <a class="brand" href="/" aria-label="OunceDown, página inicial">
       <img class="brand-mark" src="/brand/ounc3-128.png" alt="" width="38" height="38" />
       <span>Ounce<b>Down</b></span>
     </a>
@@ -52,7 +83,6 @@
 
   <main>
     <section class="hero">
-      <span class="pill"><span class="dot"></span> Rápido, gratuito e sem cadastro</span>
       <h1>{{H1_A}}<br /><span class="grad">{{H1_B}}</span></h1>
       <p class="lead">{{LEAD}}</p>
 
@@ -162,9 +192,9 @@
     <section class="section" id="como-funciona">
       <h2 class="section-title">Como funciona</h2>
       <ol class="steps">
-        <li><span>1</span><h3>Copie o link</h3><p>Abra o vídeo no app ou navegador e copie o endereço.</p></li>
-        <li><span>2</span><h3>Cole no OunceDown</h3><p>A plataforma é detectada automaticamente.</p></li>
-        <li><span>3</span><h3>Escolha e baixe</h3><p>Selecione a resolução ou só o áudio e pronto.</p></li>
+        <li><span>1</span><h3>Copie o link</h3><p>No app, toque em Compartilhar e depois em Copiar link.</p></li>
+        <li><span>2</span><h3>Cole aqui</h3><p>O site reconhece sozinho de qual rede é o vídeo.</p></li>
+        <li><span>3</span><h3>Escolha e baixe</h3><p>Vídeo ou só o áudio. O arquivo vai direto para o seu aparelho.</p></li>
       </ol>
     </section>
 
@@ -172,9 +202,9 @@
       <h2 class="section-title">Recursos</h2>
       <div class="features">
         <div class="feature"><div class="f-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><h3>Até {{MAX_LABEL}}</h3><p>{{RES_TEXT}}</p></div>
-        <div class="feature"><div class="f-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><h3>Áudio em MP3</h3><p>Extraia só a trilha sonora na melhor qualidade.</p></div>
-        <div class="feature"><div class="f-icon"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg></div><h3>Rápido</h3><p>Progresso em tempo real, sem anúncios no meio do download.</p></div>
-        <div class="feature"><div class="f-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Privado</h3><p>Sem cadastro. Os arquivos são apagados do servidor.</p></div>
+        <div class="feature"><div class="f-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><h3>Só o áudio</h3><p>Converte para MP3. Bom para música, podcast e aula.</p></div>
+        <div class="feature"><div class="f-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div><h3>Sem conta</h3><p>Não pede cadastro, e-mail nem aplicativo.</p></div>
+        <div class="feature"><div class="f-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Nada fica guardado</h3><p>O arquivo é apagado do servidor 30 minutos depois.</p></div>
       </div>
     </section>
 
@@ -218,7 +248,8 @@
       <a href="/termos">Termos de uso</a>
       <a href="mailto:{{CONTACT_EMAIL}}">Contato</a>
     </nav>
-    <p>© <span id="year"></span> OunceDown · Use com responsabilidade e respeite os direitos autorais.</p>
+    <p class="made-in">Feito em Minas Gerais e servido por <a href="https://github.com/MajorCaio/servidor-twist" target="_blank" rel="noopener">um tablet de 1 GB de RAM</a>.</p>
+    <p>© <span id="year"></span> OunceDown. Baixe só o que você tem direito de baixar.</p>
   </footer>
 
   <div class="toast" id="toast" role="alert"></div>

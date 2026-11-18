@@ -1,146 +1,146 @@
-// Conteúdo de SEO do OunceDown: a página inicial e uma página de entrada para cada busca importante.
-// Todas usam o mesmo modelo (public/index.html); aqui ficam título, descrição, textos e perguntas.
-// {{MAX_LABEL}} vira a resolução máxima do servidor (ex.: 720p ou 4K) e {{SITE_NAME}} o nome do site.
+// Textos de cada página. Todas usam o mesmo HTML (public/index.html); aqui mudam só título,
+// descrição, chamada e perguntas, pensados para o que as pessoas digitam no Google.
+// {{MAX_LABEL}} vira a resolução máxima do servidor (720p no tablet) e {{SITE_NAME}} o nome do site.
 
 const commonFaq = [
   ['Por que algumas resoluções aparecem desativadas?',
-    'O {{SITE_NAME}} só oferece qualidades que existem no vídeo original e que o servidor suporta no momento (até {{MAX_LABEL}}). Se o vídeo foi publicado em resolução menor, as opções maiores ficam desativadas.'],
-  ['Consigo baixar vídeos privados?',
-    'Não. Apenas mídias públicas, que qualquer pessoa consegue ver sem fazer login, podem ser baixadas.'],
+    'Porque o vídeo original não foi publicado nelas, ou porque passam do limite do servidor (hoje, {{MAX_LABEL}}). Só aparecem as qualidades que dá para entregar de verdade.'],
+  ['Consigo baixar vídeo privado?',
+    'Não. Só funciona com o que qualquer pessoa consegue assistir sem fazer login.'],
   ['Funciona no celular?',
-    'Sim. O site funciona no navegador do Android e do iPhone, sem instalar nada: copie o link no app e toque em “Colar”.'],
-  ['É gratuito? Preciso criar conta?',
-    'É gratuito e não precisa de cadastro. O site é mantido por anúncios discretos, que nunca aparecem no meio do download.'],
-  ['Posso baixar qualquer conteúdo?',
-    'Baixe apenas conteúdos seus, de domínio público ou com permissão do autor. Respeite os direitos autorais e os termos de uso de cada plataforma.'],
+    'Funciona no navegador do Android e do iPhone, sem instalar nada. Copie o link no app e toque em “Colar”.'],
+  ['É de graça? Precisa criar conta?',
+    'É de graça e não tem cadastro. Os anúncios pagam o servidor e nunca aparecem no meio do download.'],
+  ['Posso baixar qualquer coisa?',
+    'Baixe vídeos seus, de domínio público ou que o autor liberou. Direito autoral vale na internet também, e cada rede tem as próprias regras.'],
 ];
 
 const pages = {
   '/': {
-    title: 'Baixar vídeos do YouTube, Instagram e Facebook | OunceDown',
-    description: 'Baixe vídeos do YouTube, Instagram, Facebook e X em MP4 ou converta para MP3. Grátis, sem cadastro e sem instalar nada — direto no navegador.',
-    h1a: 'Baixe qualquer vídeo',
-    h1b: 'em segundos.',
-    lead: 'Vídeos em até {{MAX_LABEL}} ou só o áudio em MP3 — direto do YouTube, Facebook, Instagram e X.',
+    title: 'Baixar vídeos do YouTube, Instagram, Facebook e X | OunceDown',
+    description: 'Cole o link e baixe vídeos do YouTube, Instagram, Facebook e X em MP4, ou só o áudio em MP3. De graça, sem cadastro e sem instalar nada.',
+    h1a: 'Cole o link.',
+    h1b: 'Leve o vídeo.',
+    lead: 'YouTube, Instagram, Facebook e X. Em MP4 até {{MAX_LABEL}}, ou só o áudio em MP3.',
     seo: `
-      <h2>Baixador de vídeos online, grátis e sem cadastro</h2>
-      <p>O {{SITE_NAME}} transforma o link de um vídeo público em um arquivo MP4 para assistir offline, ou extrai só o áudio em MP3. Funciona no computador e no celular, sem programas, extensões ou criação de conta.</p>
-      <p>Basta copiar o endereço do vídeo, colar no campo acima e escolher entre vídeo ou áudio. O site detecta a plataforma sozinho e mostra só as qualidades disponíveis para aquele vídeo.</p>`,
+      <h2>Para que serve o {{SITE_NAME}}</h2>
+      <p>Você cola o link de um vídeo público e recebe o arquivo para assistir sem internet. Se preferir, sai só o áudio, em MP3. Funciona no computador e no celular, sem programa, extensão ou conta.</p>
+      <p>O site descobre sozinho de qual rede é o link e mostra só as qualidades que aquele vídeo realmente tem.</p>`,
     faq: commonFaq,
   },
 
   '/baixar-video-youtube': {
     platform: 'YouTube',
-    title: 'Baixar vídeo do YouTube em MP4 — grátis e sem programa | OunceDown',
-    description: 'Cole o link e baixe vídeos do YouTube em MP4, em até {{MAX_LABEL}}, direto no navegador. Grátis, sem cadastro e sem instalar nada.',
+    title: 'Baixar vídeo do YouTube em MP4, sem programa | OunceDown',
+    description: 'Cole o link e salve vídeos do YouTube em MP4, até {{MAX_LABEL}}, direto pelo navegador. De graça e sem cadastro.',
     h1a: 'Baixar vídeo do YouTube',
     h1b: 'em MP4.',
-    lead: 'Cole o link do vídeo do YouTube e salve em MP4 (até {{MAX_LABEL}}) ou só o áudio em MP3.',
+    lead: 'Cole o link do vídeo e salve em MP4 (até {{MAX_LABEL}}), ou só o áudio em MP3.',
     seo: `
-      <h2>Como baixar vídeos do YouTube</h2>
+      <h2>Como baixar vídeo do YouTube</h2>
       <ol>
-        <li>Abra o vídeo no app ou no site do YouTube e toque em <b>Compartilhar → Copiar link</b>.</li>
-        <li>Cole o link no campo acima e toque em <b>Analisar</b>.</li>
-        <li>Escolha <b>Vídeo MP4</b> e a qualidade, e toque em <b>Baixar vídeo</b>.</li>
+        <li>No app ou no site do YouTube, toque em <b>Compartilhar</b> e depois em <b>Copiar link</b>.</li>
+        <li>Cole o link no campo lá em cima e toque em <b>Analisar</b>.</li>
+        <li>Deixe em <b>Vídeo MP4</b>, escolha a qualidade e toque em <b>Baixar vídeo</b>.</li>
       </ol>
-      <p>Funcionam links de vídeos comuns, Shorts e links curtos (youtu.be). Playlists não são baixadas inteiras: o {{SITE_NAME}} baixa só o vídeo do link.</p>`,
+      <p>Vale para vídeo comum, Shorts e link curto (youtu.be). Playlist não vem inteira: o {{SITE_NAME}} baixa só o vídeo do link.</p>`,
     faq: [
-      ['Dá para baixar YouTube Shorts?', 'Sim. Copie o link do Short pelo botão Compartilhar e cole no {{SITE_NAME}}, como em qualquer outro vídeo.'],
-      ['Em que qualidade o vídeo é baixado?', 'Na melhor qualidade disponível até {{MAX_LABEL}}. Se o vídeo original tiver resolução menor, ele é baixado na resolução original.'],
+      ['Dá para baixar Shorts?', 'Dá. Copie o link do Short pelo botão Compartilhar e cole aqui, como qualquer outro vídeo.'],
+      ['Em que qualidade o vídeo vem?', 'Na melhor disponível até {{MAX_LABEL}}. Se o original for menor que isso, vem na resolução original.'],
       ...commonFaq.slice(1),
     ],
   },
 
   '/youtube-para-mp3': {
     platform: 'YouTube',
-    title: 'Converter YouTube para MP3 — grátis e online | OunceDown',
-    description: 'Converta vídeos do YouTube para MP3 na melhor qualidade disponível. Cole o link, escolha Áudio MP3 e baixe. Grátis e sem cadastro.',
-    h1a: 'Converter YouTube',
+    title: 'YouTube para MP3: converta online e de graça | OunceDown',
+    description: 'Transforme vídeos do YouTube em MP3 na melhor qualidade que o vídeo tiver. Cole o link, escolha Áudio MP3 e baixe. Sem cadastro.',
+    h1a: 'YouTube',
     h1b: 'para MP3.',
-    lead: 'Cole o link de um vídeo do YouTube e baixe só o áudio em MP3, na melhor qualidade disponível.',
+    lead: 'Cole o link de um vídeo do YouTube e baixe só o áudio, em MP3.',
     seo: `
-      <h2>Como converter um vídeo do YouTube em MP3</h2>
+      <h2>Como passar um vídeo do YouTube para MP3</h2>
       <ol>
-        <li>Copie o link do vídeo no YouTube (<b>Compartilhar → Copiar link</b>).</li>
-        <li>Cole no campo acima e toque em <b>Analisar</b>.</li>
-        <li>Selecione a aba <b>Áudio MP3</b> e toque em <b>Baixar áudio</b>.</li>
+        <li>Copie o link do vídeo no YouTube (<b>Compartilhar</b> e depois <b>Copiar link</b>).</li>
+        <li>Cole no campo lá em cima e toque em <b>Analisar</b>.</li>
+        <li>Mude para a aba <b>Áudio MP3</b> e toque em <b>Baixar áudio</b>.</li>
       </ol>
-      <p>O áudio é extraído do próprio vídeo e convertido para MP3 com a maior qualidade disponível, ideal para ouvir podcasts, aulas e palestras offline.</p>`,
+      <p>O áudio sai do próprio vídeo e é convertido na melhor qualidade disponível. Serve bem para podcast, aula e palestra no fone, sem gastar internet.</p>`,
     faq: [
-      ['Qual a qualidade do MP3?', 'O {{SITE_NAME}} usa a melhor faixa de áudio que o vídeo oferece e converte para MP3 de alta qualidade (até 320 kbps, conforme o original).'],
-      ['Funciona com vídeos longos?', 'Sim, mas vídeos muito longos demoram mais para converter. Acompanhe a barra de progresso.'],
+      ['Qual a qualidade do MP3?', 'Usamos a melhor faixa de áudio que o vídeo tem e convertemos em MP3 de até 320 kbps, dependendo do original.'],
+      ['Funciona com vídeo longo?', 'Funciona, só demora mais. A barra de progresso mostra em que pé está.'],
       ...commonFaq.slice(1),
     ],
   },
 
   '/baixar-video-instagram': {
     platform: 'Instagram',
-    title: 'Baixar vídeo e Reels do Instagram — grátis | OunceDown',
-    description: 'Baixe Reels e vídeos públicos do Instagram em MP4 ou extraia o áudio em MP3. Cole o link e pronto — grátis e sem login.',
+    title: 'Baixar Reels e vídeos do Instagram, de graça | OunceDown',
+    description: 'Salve Reels e vídeos públicos do Instagram em MP4, ou só o áudio em MP3. É colar o link e baixar, sem login.',
     h1a: 'Baixar Reels e vídeos',
     h1b: 'do Instagram.',
-    lead: 'Cole o link de um Reel ou vídeo público do Instagram e salve em MP4 ou só o áudio em MP3.',
+    lead: 'Cole o link de um Reel ou vídeo público e salve em MP4, ou só o áudio em MP3.',
     seo: `
       <h2>Como baixar Reels do Instagram</h2>
       <ol>
-        <li>No Instagram, toque nos <b>três pontinhos</b> ou no ícone de <b>enviar</b> do Reel e escolha <b>Copiar link</b>.</li>
-        <li>Cole o link no campo acima e toque em <b>Analisar</b>.</li>
-        <li>Escolha vídeo ou áudio e toque em baixar.</li>
+        <li>No Reel, toque nos <b>três pontinhos</b> ou no ícone de <b>enviar</b> e escolha <b>Copiar link</b>.</li>
+        <li>Cole o link no campo lá em cima e toque em <b>Analisar</b>.</li>
+        <li>Escolha vídeo ou áudio e baixe.</li>
       </ol>
-      <p>Só funcionam publicações de perfis públicos. Conteúdos de perfis privados e Stories exigem login e não podem ser baixados.</p>`,
+      <p>Só funciona com perfil público. Perfil privado e Stories pedem login, então não dá para baixar.</p>`,
     faq: [
-      ['Dá para baixar Stories?', 'Não. Stories e publicações de contas privadas exigem login, e o {{SITE_NAME}} só acessa conteúdo público.'],
-      ['O vídeo baixado tem marca d’água?', 'Não adicionamos marca d’água. O arquivo é o vídeo publicado no Instagram.'],
+      ['Dá para baixar Stories?', 'Não. Stories e posts de contas privadas pedem login, e o {{SITE_NAME}} só acessa o que é público.'],
+      ['O vídeo vem com marca d’água?', 'Não colocamos marca nenhuma. Você recebe o vídeo do jeito que foi publicado.'],
       ...commonFaq.slice(1),
     ],
   },
 
   '/baixar-video-facebook': {
     platform: 'Facebook',
-    title: 'Baixar vídeo do Facebook em MP4 — grátis | OunceDown',
-    description: 'Baixe vídeos públicos do Facebook em MP4 ou extraia o áudio em MP3. Funciona no celular e no PC, sem cadastro e sem instalar nada.',
+    title: 'Baixar vídeo do Facebook em MP4, de graça | OunceDown',
+    description: 'Salve vídeos públicos do Facebook em MP4, ou só o áudio em MP3. Funciona no celular e no PC, sem cadastro e sem instalar nada.',
     h1a: 'Baixar vídeo',
     h1b: 'do Facebook.',
-    lead: 'Cole o link de um vídeo público do Facebook e salve em MP4 ou só o áudio em MP3.',
+    lead: 'Cole o link de um vídeo público do Facebook e salve em MP4, ou só o áudio em MP3.',
     seo: `
-      <h2>Como baixar vídeos do Facebook</h2>
+      <h2>Como baixar vídeo do Facebook</h2>
       <ol>
-        <li>No vídeo, toque em <b>Compartilhar → Copiar link</b>.</li>
-        <li>Cole o link no campo acima e toque em <b>Analisar</b>.</li>
-        <li>Escolha a qualidade ou o áudio MP3 e baixe.</li>
+        <li>No vídeo, toque em <b>Compartilhar</b> e depois em <b>Copiar link</b>.</li>
+        <li>Cole o link no campo lá em cima e toque em <b>Analisar</b>.</li>
+        <li>Escolha a qualidade ou o áudio em MP3 e baixe.</li>
       </ol>
-      <p>Funcionam vídeos públicos de páginas, perfis e Reels do Facebook, inclusive links curtos (fb.watch). Vídeos de grupos privados não podem ser baixados.</p>`,
+      <p>Funciona com vídeo público de página, perfil e Reels, inclusive link curto (fb.watch). Vídeo de grupo privado não dá.</p>`,
     faq: [
-      ['Funciona com Reels do Facebook?', 'Sim. Copie o link do Reel e cole no {{SITE_NAME}}.'],
-      ['Por que aparece “mídia privada”?', 'O vídeo está em um perfil, grupo ou página com acesso restrito. Só vídeos públicos podem ser baixados.'],
+      ['Funciona com Reels do Facebook?', 'Funciona. Copie o link do Reel e cole aqui.'],
+      ['Por que aparece “mídia privada”?', 'O vídeo está num perfil, grupo ou página fechada. Só dá para baixar o que é público.'],
       ...commonFaq.slice(1),
     ],
   },
 
   '/baixar-video-twitter-x': {
     platform: 'X',
-    title: 'Baixar vídeo do X (Twitter) em MP4 — grátis | OunceDown',
-    description: 'Baixe vídeos de posts públicos do X (antigo Twitter) em MP4 ou converta para MP3. Cole o link do post e baixe. Grátis e sem cadastro.',
+    title: 'Baixar vídeo do X (Twitter) em MP4, de graça | OunceDown',
+    description: 'Salve vídeos de posts públicos do X, o antigo Twitter, em MP4 ou MP3. Cole o link do post e baixe. Sem cadastro.',
     h1a: 'Baixar vídeo do X',
     h1b: '(Twitter).',
-    lead: 'Cole o link de um post público do X (antigo Twitter) e salve o vídeo em MP4 ou o áudio em MP3.',
+    lead: 'Cole o link de um post público do X, o antigo Twitter, e salve em MP4 ou só o áudio em MP3.',
     seo: `
-      <h2>Como baixar vídeos do X (Twitter)</h2>
+      <h2>Como baixar vídeo do X (Twitter)</h2>
       <ol>
-        <li>No post com o vídeo, toque em <b>Compartilhar → Copiar link</b>.</li>
-        <li>Cole o link no campo acima e toque em <b>Analisar</b>.</li>
+        <li>No post com o vídeo, toque em <b>Compartilhar</b> e depois em <b>Copiar link</b>.</li>
+        <li>Cole o link no campo lá em cima e toque em <b>Analisar</b>.</li>
         <li>Escolha vídeo ou áudio e baixe.</li>
       </ol>
-      <p>Funcionam links de x.com e twitter.com. Posts de contas protegidas não podem ser baixados.</p>`,
+      <p>Aceita link de x.com e de twitter.com. Post de conta protegida não dá para baixar.</p>`,
     faq: [
-      ['Funciona com links do twitter.com?', 'Sim. Links antigos do twitter.com e os novos do x.com funcionam igual.'],
-      ['Dá para baixar GIFs do X?', 'Sim. Os GIFs do X são vídeos curtos e são baixados em MP4.'],
+      ['Link do twitter.com funciona?', 'Funciona. Os links antigos do twitter.com e os novos do x.com dão no mesmo.'],
+      ['Dá para baixar GIF do X?', 'Dá. Os GIFs do X são, na verdade, vídeos curtos, e vêm em MP4.'],
       ...commonFaq.slice(1),
     ],
   },
 };
 
-// Links internos mostrados em todas as páginas (ajudam o Google a encontrar as páginas de entrada).
+// Links para as outras páginas, no rodapé de todas (ajudam o Google a achar cada uma).
 const toolLinks = [
   ['/baixar-video-youtube', 'Baixar vídeo do YouTube'],
   ['/youtube-para-mp3', 'YouTube para MP3'],

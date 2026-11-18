@@ -22,7 +22,7 @@ async function download(url, dest) {
   fs.mkdirSync(BIN_DIR, { recursive: true });
 
   if (fs.existsSync(YTDLP_DEST)) {
-    console.log('✔ yt-dlp já existe — atualizando…');
+    console.log('✔ yt-dlp já existe, atualizando…');
     try { execFileSync(YTDLP_DEST, ['-U'], { stdio: 'inherit' }); } catch { /* ignora */ }
   } else {
     console.log(`↓ Baixando yt-dlp de ${YTDLP_URL}`);

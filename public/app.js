@@ -79,7 +79,7 @@
       el.icon.classList.remove('pop'); void el.icon.offsetWidth; if (p) el.icon.classList.add('pop');
     }
     if (!v) setHint('');
-    else if (p) setHint(`<b>${PLATFORMS[p].name}</b> detectado — pronto para analisar.`, 'ok');
+    else if (p) setHint(`<b>${PLATFORMS[p].name}</b> reconhecido. Agora é só clicar em Analisar.`, 'ok');
     else setHint('Plataforma não reconhecida. Use links do YouTube, Facebook, Instagram ou X.', 'err');
   }
   el.input.addEventListener('input', onInput);
@@ -286,6 +286,6 @@
 
   // Aviso se o servidor não tem os binários
   fetch('/api/health').then((r) => r.json()).then((h) => {
-    if (!h.ready) setHint('⚠ Servidor sem yt-dlp/ffmpeg — rode <b>npm run setup</b> no terminal.', 'err');
+    if (!h.ready) setHint('⚠ Servidor sem yt-dlp/ffmpeg. Rode <b>npm run setup</b> no terminal.', 'err');
   }).catch(() => {});
 })();

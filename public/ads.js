@@ -1,5 +1,5 @@
 /*
- * OunceDown — espaços de anúncio não invasivos.
+ * Espaços de anúncio do OunceDown, pensados para não atrapalhar.
  *
  * Regras de design:
  *  - Nada de pop-up, popunder, intersticial, vídeo com som ou banner grudado na tela do celular.
@@ -107,7 +107,7 @@ window.OUNCEDOWN_ADS = Object.assign({
     empty(el);
   }
 
-  // Laterais só existem em telas largas — não carrega nada em telas menores.
+  // As laterais só aparecem em telas largas; nas menores, nada é carregado.
   const visible = (el) => getComputedStyle(el).display !== 'none';
 
   if ('IntersectionObserver' in window) {
