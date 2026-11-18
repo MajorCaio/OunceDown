@@ -14,10 +14,10 @@ Você cola o link, o site descobre de qual rede é e mostra título, miniatura e
 
 Algumas decisões que tomei pelo caminho:
 
-- O front é HTML, CSS e JavaScript puros. Não precisei de framework e o tablet agradece.
+- O front é HTML, CSS e JavaScript puros.
 - Cada busca importante ("YouTube para MP3", "baixar Reels"...) tem uma página própria gerada a partir do mesmo HTML, com dados estruturados para o Google, sitemap e 404 de verdade.
 - Os anúncios ficam presos em iframes com sandbox, sem pop-up nem redirecionamento, e com o espaço reservado para a página não pular quando eles carregam. Funciona com Adsterra ou Google AdSense.
-- A parte pesada (analisar um link com o yt-dlp) tem fila e limite por visitante, porque num servidor fraco meia dúzia de pedidos ao mesmo tempo já derrubavam tudo. Mais detalhes abaixo.
+- A parte pesada (analisar um link com o yt-dlp) tem fila e limite por visitante, porque num servidor fraco meia dúzia de pedidos ao mesmo tempo já derrubavam tudo.
 
 ## Tecnologias
 
