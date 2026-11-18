@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/brand/og-image.png" alt="OunceDown" width="720" />
+  <a href="https://ounc3.com.br"><img src="docs/site-desktop.webp" alt="Página inicial do OunceDown" width="800" /></a>
 </p>
 
 # OunceDown
@@ -105,6 +105,7 @@ public/
   termos.html        Termos de Uso
   brand/             Logo, ícones, banner de fundo e imagem de compartilhamento
 scripts/setup.js     Baixa o yt-dlp e o ffmpeg
+docs/                Captura do site usada neste README
 ```
 
 ### API
