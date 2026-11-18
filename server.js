@@ -188,6 +188,9 @@ function renderPage(file, route = '/') {
     }, seoBlocks(cfg, route, page, base));
   }
   html = html.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in vars ? (k.startsWith('RAW_') ? vars[k] : escapeHtml(vars[k])) : m));
+  // Tira do HTML as opções de qualidade acima do limite do servidor (no tablet, 1080p e 4K).
+  html = html.replace(/\s*<label class="opt"><input type="radio" name="q" value="(\d+)"[^]*?<\/label>/g,
+    (m, h) => (Number(h) > MAX_HEIGHT ? '' : m));
   if (adsProvider(cfg) === 'adsense' && validClient(client)) {
     html = html.replace('</head>',
       `  <meta name="google-adsense-account" content="${client}" />\n` +
@@ -376,6 +379,7 @@ async function fetchInfo(p) {
     thumbnail: info.thumbnail || info.thumbnails?.at(-1)?.url || '',
     duration: info.duration || null,
     maxHeight: maxH,
+    limit: MAX_HEIGHT,
     qualities: [720, 1080, 2160].map((q) => ({ height: q, available: q <= MAX_HEIGHT && maxH >= q * 0.9 })),
     hasVideo: heights.length > 0 || !!info.height,
     hasAudio,

@@ -10,7 +10,7 @@ Comecei o projeto para estudar Node.js e acabei levando a sério: hoje ele roda 
 
 ## O que ele faz
 
-Você cola o link, o site descobre de qual rede é e mostra título, miniatura e duração. Aí é escolher entre vídeo (até 4K, ou o limite que o servidor aguentar) e áudio em MP3. O progresso aparece em tempo real enquanto o servidor baixa o vídeo, o áudio e junta os dois com o ffmpeg.
+Você cola o link, o site descobre de qual rede é e mostra título, miniatura e duração. Aí é escolher entre vídeo e áudio em MP3. No tablet o vídeo vai até 720p, que é o que ele aguenta; numa máquina mais forte o código chega a 4K, é só mudar o `MAX_HEIGHT`. O progresso aparece em tempo real enquanto o servidor baixa o vídeo, o áudio e junta os dois com o ffmpeg.
 
 Algumas decisões que tomei pelo caminho:
 

@@ -148,11 +148,18 @@
     el.uploader.hidden = !d.uploader;
 
     // Qualidades
+    // Opções acima do limite do servidor nem aparecem (no tablet, nada acima de 720p).
     let best = null;
+    const limit = d.limit || 2160;
+    let shown = 0;
     d.qualities.forEach((q) => {
       const input = el.videoOpts.querySelector(`input[value="${q.height}"]`);
+      if (!input) return; // opção que o servidor já tirou do HTML
+      const opt = input.closest('.opt');
+      opt.hidden = q.height > limit;
+      if (!opt.hidden) shown++;
       input.disabled = !q.available;
-      input.closest('.opt').classList.toggle('unavailable', !q.available);
+      opt.classList.toggle('unavailable', !q.available);
       input.checked = false;
       if (q.available && (q.height <= 1080 || !best)) best = input;
     });
@@ -162,6 +169,7 @@
       i720.disabled = false; i720.closest('.opt').classList.remove('unavailable'); best = i720;
     }
     if (best) best.checked = true;
+    el.videoOpts.style.gridTemplateColumns = `repeat(${Math.max(shown, 1)}, 1fr)`;
 
     setKind(d.hasVideo ? 'video' : 'audio');
     $('.tab[data-kind="video"]').disabled = !d.hasVideo;
