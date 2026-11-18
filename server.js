@@ -166,6 +166,17 @@ function seoBlocks(cfg, route, page, base) {
 
 // Renderiza páginas HTML trocando {{CHAVES}} e injetando a verificação do AdSense no <head>.
 // Chaves RAW_* entram como HTML; as demais são escapadas.
+
+// Versão do CSS/JS no endereço (?v=...), tirada da data dos arquivos. Quando eles mudam,
+// o endereço muda junto e a cópia antiga guardada pela Cloudflare deixa de ser usada.
+function assetVersion() {
+  let newest = 0;
+  for (const f of ['styles.css', 'app.js', 'ads.js']) {
+    try { newest = Math.max(newest, fs.statSync(path.join(ROOT, 'public', f)).mtimeMs); } catch { /* sem o arquivo */ }
+  }
+  return Math.floor(newest / 1000).toString(36);
+}
+
 function renderPage(file, route = '/') {
   const cfg = loadConfig();
   const client = cfg.adsense?.client;
@@ -178,6 +189,7 @@ function renderPage(file, route = '/') {
     UPDATED: formatDate(cfg.policiesUpdated || ''),
     MAX_LABEL,
     RES_TEXT,
+    ASSET_V: assetVersion(),
   };
   const page = SEO.pages[route];
   const vars = { ...base, CANONICAL: siteBase(cfg) + route };
